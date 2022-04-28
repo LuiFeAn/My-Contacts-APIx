@@ -2,7 +2,6 @@ const ContactsRepository = require("../repositories/ContactRepository");
 
 class ContactController {
 
-    //Listar todos os registros
     async index(req,res){
 
         try{
@@ -13,17 +12,39 @@ class ContactController {
 
         }
     }
-    //Obter um registro -> Pegar por ID
-    show(){
 
+
+    async show(req,res){
+
+        const {id} = req.params;
+        const contact = await ContactsRepository.findById(id);
+
+        if(!contact){
+            return res.status(404).json({error:"Usuário não encontrado!"});
+        }
+
+        res.json(contact);
     }
-    //Criar um registro
+
     update(){
 
     }
-    //Deletar um registro
-    delete(){
 
+    async delete(req,res){
+
+        const {id} = req.params;
+        const contact = await ContactsRepository.findById(id);
+
+        if(!contact){
+
+            //Not Found
+            return res.status(404).json({error:"Usuário não encontrado!"});
+        }
+
+        await ContactsRepository.delete(id);
+
+        //No Content -> Deu certo, mas não possui corpo!
+        res.sendStatus(204);
     }
 }
 
