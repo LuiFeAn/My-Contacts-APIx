@@ -64,8 +64,6 @@ class ContactController {
         }
 
         if(!contactExists){
-
-            //Not Found
             return res.status(404).json({error:"Usuário não encontrado!"});
         }
 
@@ -93,18 +91,13 @@ class ContactController {
     async delete(req,res){
 
         const {id} = req.params;
-        console.log(req.reapi);
         const contact = await ContactsRepository.findById(id);
 
         if(!contact){
-
-            //Not Found
             return res.status(404).json({error:"Usuário não encontrado!"});
         }
 
         await ContactsRepository.delete(id);
-
-        //No Content -> Deu certo, mas não possui corpo!
         res.sendStatus(204);
     }
 }
