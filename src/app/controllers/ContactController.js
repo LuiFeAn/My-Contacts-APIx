@@ -5,7 +5,8 @@ class ContactController {
 
     async index(req,res){
 
-        const contacts = await ContactsRepository.findAll();
+        const {orderBy} = req.query;
+        const contacts = await ContactsRepository.findAll(orderBy);
         res.json(contacts);
     }
 
@@ -20,7 +21,7 @@ class ContactController {
             });
 
         return res.json(contact);
-        
+
     }
 
 
@@ -58,7 +59,7 @@ class ContactController {
         if(!name) return res.status(400).json({
                 error:"É necessário um nome!"
             });
-        
+
 
         if(!contactExists) return res.status(404).json(
             {error:"Usuário não encontrado!"}
@@ -66,7 +67,7 @@ class ContactController {
 
         const contactByEmail = await ContactsRepository.findByEmail(email);
 
-        if(contactExists && contactByEmail.id != id) return res.status(400).json({
+        if(contactByEmail) return res.status(400).json({
             error:"Este email já existe!"
         });
 
@@ -85,7 +86,6 @@ class ContactController {
 
         const {id} = req.params;
         const contact = await ContactsRepository.findById(id);
-
         if(!contact) return res.status(404).json({
             error:"Usuário não encontrado!"
         });

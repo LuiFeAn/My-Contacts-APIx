@@ -1,95 +1,67 @@
-const {v4} = require("uuid");
-
-let contacts = [
-
-    {
-        id:v4(),
-        name:"Luis Fernando",
-        email:"luisfernandogvv@gmail.com",
-        phone:"1234567",
-        category_id:v4(),
-    },
-    {
-        id:v4(),
-        name:"Rafael Gustavo",
-        email:"rafaelgustavo@gmail.com",
-        phone:"1234567",
-        category_id:v4(),
-    },
-]
+const db = require("../../database");
 
 class ContactRepository {
 
-    findAll(){
-        return new Promise((resolve)=>resolve(contacts));
-    }
+    async findAll(orderBy = 'ASC'){
 
-    findById(id){
-        return new Promise((resolve)=>resolve(
-
-            contacts.find((contact)=>contact.id === id),
-
-        ));
-    }
-
-    delete(id){
-        return new Promise((resolve)=>resolve(
-
-            contacts = contacts.filter((contact)=>contact != id),
-            resolve(),
-        ));
-    }
-
-    findByEmail(email){
-
-        return new Promise((resolve)=>resolve(
-
-            contacts.find((contact)=>contact.email === email),
-
-        ))
-    }
-
-    create({name,email,phone,category_id}){
-
-        return new Promise((resolve)=>{
-
-            const newContact = {
-
-                id:v4(),
-                name,
-                email,
-                phone,
-                category_id:v4(),
-            }
-
-            contacts.push(newContact);
-            resolve(newContact);
-        });
+        const direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+        const rows = await db.query(`SELECT * FROM contacts ORDER BY name ${direction}`);
+        return rows;
 
     }
 
-    create(id,{name,email,phone,category_id}){
+    async findById(id){
 
-        return new Promise((resolve)=>{
+        const [row] = await db.query(`
+            SELECT * FROM contacts
+            WHERE id = $1
+        `,[id]);
+        return row;
 
-            const updatedContact = {
+    }
 
-                id:v4(),
-                name,
-                email,
-                phone,
-                category_id:v4(),
-            }
+    async findByEmail(email){
 
-            contacts = contacts.map((contact)=>(
+        const [row] = await db.query(`
+            SELECT * FROM contacts
+            WHERE email = $1
+        `,[email]);
+        return row;
+    }
 
-                contact.id === id ? updatedContact : contact
+    async delete(id){
 
-            ));
+        const deleteOp = await db.query(`
+            DELETE FROM contacts
+            WHERE id = $1;
+        `,[id]);
+        return deleteOp;
 
-            resolve(updatedContact);
+    }
 
-        });
+    async create({
+        name,email,phone,category_id
+    }){
+
+        const [row] = await db.query(`
+            INSERT INTO contacts (name,email,phone,category_id)
+            VALUES ($1,$2,$3,$4)
+            RETURNING *
+        `,[name,email,phone,category_id]);
+        return row;
+
+    }
+
+    async update(id,{
+        name,email,phone,category_id}){
+
+        const [row] = await db.query(`
+            UPDATE contacts
+            SET name = $1, email = $2, phone = $3, category_id = $4
+            WHERE id = $5
+            RETURNING *
+        `,[name,email,phone,category_id,id]);
+        return row;
 
     }
 }
