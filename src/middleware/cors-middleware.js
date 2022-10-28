@@ -1,3 +1,3 @@
 module.exports = (req,res,next) => {
-    res.setHeader('Acess-Control-Allow-Origin','http://localhost:3000');
+    res.setHeader('Acess-Control-Allow-Origin',process.env.CORS_ORIGIN);
 }
