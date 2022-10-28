@@ -1,5 +1,5 @@
-const ContactRepository = require("../repositories/ContactRepository");
-const ContactsRepository = require("../repositories/ContactRepository");
+const ContactRepository = require("../repositories/contact-repository");
+const ContactsRepository = require("../repositories/contact-repository");
 
 class ContactController {
 
@@ -7,6 +7,7 @@ class ContactController {
 
         const {orderBy} = req.query;
         const contacts = await ContactsRepository.findAll(orderBy);
+        res.setHeader('Acess-Control-Allow-Origin','http://localhost:3000');
         res.json(contacts);
     }
 
