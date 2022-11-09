@@ -20,9 +20,9 @@ class CategoryController {
 
     async store(req,res){
 
-        const {categoryName} = req.body;
-        if(!categoryName) return res.json({error:'É necessário a inserção de um nome para a categoria !'}).status(400);
-        const category = await CategoryRepository.create(categoryName);
+        const {category_name} = req.body;
+        if(!category_name) return res.json({error:'É necessário a inserção de um nome para a categoria !'}).status(400);
+        const category = await CategoryRepository.create(category_name);
         return res.status(201).json(category).status(200);
     }
 
