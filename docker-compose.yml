@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+
+    api:
+        image: node
+        container_name: MY_CONTACTS_API
+        restart: always
+        volumes:
+            - ${PWD}:/usr/src/app
+        working_dir: /usr/src/app
+        expose:
+            - 3001
+        ports:
+            - "${API_PORT}:3001"
+        depends_on:
+            - db
+        environment:
+            API_PORT: ${API_PORT}
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
+            DB_PORT: ${DB_PORT}
+            DB_NAME: ${DB_NAME}
+            DB_HOST: ${DB_HOST}
+        command: bash -c "npm install && npm run start-dev"
+
+    db:
+        image: postgres
+        container_name: MY_CONTACTS_DB
+        restart: always
+        expose:
+            - 5432
+        ports:
+            - "${DB_PORT}:5432"
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+
+
