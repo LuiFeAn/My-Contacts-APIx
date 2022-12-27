@@ -42,7 +42,7 @@ class CategoryController {
             error:'É necessário a inserção de um nome para a categoria !'
         });
 
-        const categoryAlreadyExists = await CategoryRepository.findByName(category_name);
+        const categoryAlreadyExists = await CategoryRepository.findByName(category_name.trim());
 
         if(categoryAlreadyExists)
         return res.status(401).json({
